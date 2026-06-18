@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DISC · Coordenadores em Movimento · meutudo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f7; color: #262626; min-height: 100vh; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+
+  .hdr { display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 1.25rem; border-bottom: 1px solid #EDEDED; margin-bottom: 1.75rem; gap: 1rem; flex-wrap: wrap; }
+  .hdr-left h1 { font-size: 18px; font-weight: 700; color: #262626; }
+  .hdr-left p { font-size: 12px; color: #888; margin-top: 3px; }
+  .pill { background: #FFE5F3; color: #A51E5B; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; align-self: center; white-space: nowrap; }
+
+  .smry { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.75rem; }
+  .sc { background: #fff; border: 1px solid #EDEDED; border-radius: 10px; padding: .875rem 1rem; }
+  .sc .v { font-size: 24px; font-weight: 700; color: #262626; }
+  .sc .v.mg { color: #D80073; }
+  .sc .l { font-size: 11px; color: #888; margin-top: 3px; }
+
+  .tabs { display: flex; gap: 2px; border-bottom: 2px solid #EDEDED; margin-bottom: 1.5rem; overflow-x: auto; }
+  .tab { padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #888; border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; font-family: inherit; transition: color .15s; }
+  .tab.active { color: #D80073; border-bottom: 3px solid #D80073; }
+  .tab:hover:not(.active) { color: #262626; background: #FFE5F3; border-radius: 6px 6px 0 0; }
+
+  .pcard { background: #fff; border: 1px solid #EDEDED; border-radius: 14px; padding: 1.5rem; }
+  .phdr { display: flex; align-items: center; gap: 14px; margin-bottom: 1.25rem; }
+  .ava { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+  .pname { font-size: 16px; font-weight: 700; color: #262626; }
+  .prole { font-size: 12px; color: #888; margin-top: 3px; }
+
+  .psec { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+  .pblk { background: #f7f7f7; border-radius: 10px; padding: 1rem; }
+  .plbl { font-size: 10px; font-weight: 700; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
+  .dbadge { display: inline-block; font-size: 16px; font-weight: 700; padding: 5px 14px; border-radius: 8px; }
+
+  .dbox { border-left: 3px solid #D80073; border-radius: 0 10px 10px 0; padding: 1rem 1.125rem; font-size: 13px; line-height: 1.65; margin-bottom: 1rem; background: #FFE5F3; color: #262626; }
+  .dbox2 { border-left: 3px solid #EDEDED; border-radius: 0 10px 10px 0; padding: 1rem 1.125rem; font-size: 13px; line-height: 1.65; margin-bottom: 1.25rem; background: #f7f7f7; color: #262626; }
+
+  .bars-title { font-size: 11px; color: #aaa; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .brow { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .blbl { font-size: 14px; font-weight: 700; width: 20px; }
+  .btrk { flex: 1; height: 10px; background: #EDEDED; border-radius: 5px; overflow: hidden; }
+  .bfll { height: 100%; border-radius: 5px; transition: width .4s ease; }
+  .bval { font-size: 12px; color: #888; width: 36px; text-align: right; }
+
+  .cwrap { position: relative; width: 100%; height: 220px; margin: 1.25rem 0 1rem; }
+
+  .dtg { display: grid; grid-template-columns: 1fr 1fr; gap: .625rem; margin-top: .5rem; }
+  .di .dk { font-size: 12px; color: #aaa; }
+  .di .dv { font-size: 13px; font-weight: 700; color: #262626; }
+
+  .gv { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .mc { background: #fff; border: 1px solid #EDEDED; border-radius: 10px; padding: 1rem; cursor: pointer; transition: border-color .15s; }
+  .mc:hover { border-color: #D80073; }
+  .mn { font-size: 13px; font-weight: 700; color: #262626; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mr { font-size: 11px; color: #aaa; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mbs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .mb { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 5px; }
+
+  .lgd { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .li { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #888; }
+  .ld { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .gcw { position: relative; height: 300px; margin-bottom: .5rem; }
+
+  .insight-box { background: #FFE5F3; border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.5rem; }
+  .insight-box h3 { font-size: 13px; font-weight: 700; color: #A51E5B; margin-bottom: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+  .insight-box ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .insight-box li { font-size: 13px; color: #262626; line-height: 1.6; padding-left: 1rem; position: relative; }
+  .insight-box li::before { content: '→'; position: absolute; left: 0; color: #D80073; font-weight: 700; }
+
+  @media (max-width: 600px) {
+    .psec { grid-template-columns: 1fr; }
+    .dtg { grid-template-columns: 1fr; }
+    .smry { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="hdr-left">
+      <h1>Perfis DISC · Coordenadores em Movimento</h1>
+      <p>Academia Customer · T&amp;D · meutudo · junho 2026</p>
+    </div>
+    <span class="pill">6 coordenadores</span>
+  </div>
+
+  <div class="smry" id="smry"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="root"></div>
+
+</div>
+
+<script>
+const DC = {D:'#D80073',I:'#FF59C1',S:'#4B8BBE',C:'#2E9B6F'};
+const DB = {D:'#FFE5F3',I:'#FBEAF0',S:'#E6F1FB',C:'#E1F5EE'};
+const DT = {D:'#A51E5B',I:'#993556',S:'#185FA5',C:'#0F6E56'};
+const DN = {D:'Dominância',I:'Influência',S:'Estabilidade',C:'Conformidade'};
+const DD = {
+  D:{title:'Dominância',desc:'Orientado a resultados, direto e determinado. Aceita desafios, toma decisões rápidas e age com autonomia. Ponto de atenção: impulsividade e escuta ativa.'},
+  I:{title:'Influência',desc:'Comunicativo, entusiasta e focado em relacionamentos. Gera engajamento com facilidade e tem alto poder de persuasão. Ponto de atenção: planejamento e follow-through dos compromissos.'},
+  S:{title:'Estabilidade',desc:'Paciente, confiável e colaborativo. Prefere ambientes previsíveis e trabalho em equipe. Ponto de atenção: lidar com mudanças rápidas e conflitos diretos.'},
+  C:{title:'Conformidade',desc:'Analítico, metódico e orientado a qualidade. Valoriza processos, dados e precisão. Ponto de atenção: decidir em cenários de incerteza e delegar sem controle total.'}
+};
+const COMBOS = {
+  IC:'Influenciador Cauteloso — persuasão aliada a critério e rigor. Tende a convencer com dados e argumentos estruturados.',
+  ID:'Influenciador Assertivo — comunicação poderosa com senso de urgência. Mobiliza times e age com velocidade.',
+  IS:'Influenciador Estável — constrói equipes coesas e clima positivo. Grande facilitador de relacionamentos.',
+  CS:'Analítico Suportivo — qualidade técnica com paciência para ensinar. Pilar de consistência nos processos.',
+  CD:'Analítico Resolutivo — precisão com capacidade de decidir quando necessário. Alta exigência de si e dos outros.',
+  CI:'Analítico Comunicativo — dados aliados à persuasão. Forte em apresentações e construção de consenso.',
+  SD:'Estabilizador Resolutivo — parceiro confiável que consegue agir sob pressão quando necessário.',
+  SI:'Estabilizador Relacional — suporte emocional com habilidade para engajar. Referência de confiança no time.',
+  SC:'Estabilizador Metódico — consistência e organização. Pilar de processos e referência técnica.',
+  DI:'Condutor Inspirador — assertividade com capacidade de influência. Lidera pelo exemplo e pelo engajamento.',
+  DC:'Condutor Analítico — resultado aliado a rigor. Exige alto padrão de si mesmo e de todos ao redor.',
+  DS:'Condutor Constante — foco em resultado sem abrir mão da lealdade e da coesão da equipe.',
+};
+const INSIGHTS = [
+  'Influência (I) é o fator predominante: 3 dos 6 coordenadores têm I como perfil primário, o que favorece engajamento, comunicação e clima positivo no time.',
+  'Dominância (D) é o fator mais baixo na média do grupo — validando a inclusão dos módulos de tomada de decisão sob pressão e mediação de conflitos no programa.',
+  'Há 2 perfis com Conformidade (C) como primário (Willian e Nathalia), trazendo rigor analítico e orientação a processos ao grupo.',
+  'Danúbio é o único com Estabilidade (S) como primário — perfil âncora de consistência e confiança no time.',
+  'A diversidade de perfis no grupo (4 primários distintos entre 6 pessoas) favorece pares de mentoria complementares entre CS e CX.',
+];
+
+const PEOPLE = [
+  {name:'Winnie Maria Teixeira Alencar Pitombeira',role:'Coordenador N1',primary:'I',secondary:'C',answers:'D,C,I,C,C,I,C,S,I,I,I,I,I,D,S,I,C,S,I,I'},
+  {name:'Willian Manholer',role:'Coordenador N2',primary:'C',secondary:'S',answers:'C,C,D,C,S,S,C,C,S,C,I,C,S,I,I,S,C,C,S,S'},
+  {name:'Cibelly Alves',role:'Coordenadora Service',primary:'I',secondary:'D',answers:'D,C,D,I,S,I,I,S,S,I,I,D,I,I,I,I,I,D,D,C'},
+  {name:'Thays Mirela Meireles de Oliveira',role:'Coordenadora Success',primary:'D',secondary:'C',answers:'C,D,C,D,C,I,D,C,D,C,C,C,D,D,C,D,D,C,D,S'},
+  {name:'Nathalia Marques Mapurunga',role:'Coordenador de Customer CX',primary:'C',secondary:'I',answers:'D,I,C,I,C,D,S,S,C,C,C,S,S,I,D,I,I,C,C,C'},
+  {name:'Danúbio Ivo Costa Santos Filho',role:'Coordenador de Customer',primary:'S',secondary:'D',answers:'S,I,C,D,C,D,S,C,I,C,C,D,D,S,D,S,I,S,I,S'},
+];
+
+PEOPLE.forEach(p => {
+  const ans = p.answers.split(',').map(s=>s.trim().toUpperCase());
+  const freq = {D:0,I:0,S:0,C:0};
+  ans.forEach(a=>{ if(freq[a]!==undefined) freq[a]++; });
+  const total = ans.length||1;
+  p.freq = freq;
+  p.pct = {D:Math.round(freq.D/total*100),I:Math.round(freq.I/total*100),S:Math.round(freq.S/total*100),C:Math.round(freq.C/total*100)};
+});
+
+function initials(n){const p=n.trim().split(' ');return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():n.slice(0,2).toUpperCase();}
+
+let activeTab = -1;
+let charts = {};
+
+function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
+
+function buildSummary(){
+  const profCounts={};
+  PEOPLE.forEach(p=>{profCounts[p.primary]=(profCounts[p.primary]||0)+1;});
+  const dom=Object.entries(profCounts).sort((a,b)=>b[1]-a[1])[0];
+  const avgI=Math.round(PEOPLE.reduce((s,p)=>s+p.pct.I,0)/PEOPLE.length);
+  document.getElementById('smry').innerHTML=`
+    <div class="sc"><div class="v">${PEOPLE.length}</div><div class="l">Respondentes</div></div>
+    <div class="sc"><div class="v mg">${dom[0]}</div><div class="l">Fator dominante (${dom[1]} de 6)</div></div>
+    <div class="sc"><div class="v">${avgI}%</div><div class="l">Média de Influência</div></div>
+    <div class="sc"><div class="v">${Object.keys(profCounts).length}</div><div class="l">Perfis distintos</div></div>`;
+}
+
+function buildTabs(){
+  let html=`<button class="tab ${activeTab===-1?'active':''}" onclick="switchTab(-1)">Visão geral</button>`;
+  PEOPLE.forEach((p,i)=>{
+    html+=`<button class="tab ${activeTab===i?'active':''}" onclick="switchTab(${i})">${p.name.split(' ')[0]}</button>`;
+  });
+  document.getElementById('tabs').innerHTML=html;
+}
+
+function switchTab(i){destroyCharts();activeTab=i;buildTabs();renderContent();}
+
+function renderContent(){
+  const root=document.getElementById('root');
+  if(activeTab===-1){root.innerHTML=renderGroup();renderGroupChart();}
+  else{root.innerHTML=renderPerson(PEOPLE[activeTab],activeTab);renderPersonChart(PEOPLE[activeTab],activeTab);}
+}
+
+function renderGroup(){
+  let html=`<div class="gv">`;
+  PEOPLE.forEach((p,i)=>{
+    html+=`<div class="mc" onclick="switchTab(${i})">
+      <div class="mn">${p.name.split(' ').slice(0,2).join(' ')}</div>
+      <div class="mr">${p.role}</div>
+      <div class="mbs">
+        <span class="mb" style="background:${DB[p.primary]};color:${DT[p.primary]}">${p.primary} · ${DN[p.primary]}</span>
+        <span class="mb" style="background:${DB[p.secondary]};color:${DT[p.secondary]};opacity:.85">${p.secondary}</span>
+      </div>
+    </div>`;
+  });
+  html+=`</div>
+  <div class="lgd">${['D','I','S','C'].map(k=>`<span class="li"><span class="ld" style="background:${DC[k]}"></span>${k} — ${DN[k]}</span>`).join('')}</div>
+  <div class="gcw"><canvas id="gc" role="img" aria-label="Distribuição DISC dos 6 coordenadores em barras empilhadas">Distribuição DISC do grupo.</canvas></div>
+  <div class="insight-box"><h3>Insights do grupo</h3><ul>${INSIGHTS.map(t=>`<li>${t}</li>`).join('')}</ul></div>`;
+  return html;
+}
+
+function renderGroupChart(){
+  const ctx=document.getElementById('gc');
+  if(!ctx)return;
+  const labels=PEOPLE.map(p=>p.name.split(' ')[0]);
+  const ds=['D','I','S','C'].map(k=>({label:k,data:PEOPLE.map(p=>p.pct[k]),backgroundColor:DC[k],borderRadius:4}));
+  charts['g']=new Chart(ctx,{type:'bar',data:{labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label} — ${DN[c.dataset.label]}: ${c.parsed.y}%`}}},
+      scales:{
+        x:{stacked:true,grid:{display:false},ticks:{font:{size:12,family:'Nunito Sans'}}},
+        y:{stacked:true,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,0.06)'}}
+      }
+    }
+  });
+}
+
+function renderPerson(p,idx){
+  const combo=p.primary+p.secondary;
+  const comboDesc=COMBOS[combo]||`Combinação ${combo} — ${DN[p.primary]} com traço de ${DN[p.secondary]}.`;
+  const ini=initials(p.name);
+  return `<div class="pcard">
+    <div class="phdr">
+      <div class="ava" style="background:${DB[p.primary]};color:${DT[p.primary]}">${ini}</div>
+      <div><div class="pname">${p.name}</div><div class="prole">${p.role}</div></div>
+    </div>
+    <div class="psec">
+      <div class="pblk"><div class="plbl">Perfil primário</div><span class="dbadge" style="background:${DB[p.primary]};color:${DT[p.primary]}">${p.primary} · ${DN[p.primary]}</span></div>
+      <div class="pblk"><div class="plbl">Perfil secundário</div><span class="dbadge" style="background:${DB[p.secondary]};color:${DT[p.secondary]}">${p.secondary} · ${DN[p.secondary]}</span></div>
+    </div>
+    <div class="dbox"><strong>${DD[p.primary].title}:</strong> ${DD[p.primary].desc}</div>
+    <div class="dbox2"><strong>Combinação ${combo}:</strong> ${comboDesc}</div>
+    <div class="bars-title">Distribuição de respostas (20 perguntas)</div>
+    ${['D','I','S','C'].map(k=>`<div class="brow">
+      <span class="blbl" style="color:${DC[k]}">${k}</span>
+      <div class="btrk"><div class="bfll" style="width:${p.pct[k]}%;background:${DC[k]}"></div></div>
+      <span class="bval">${p.pct[k]}%</span>
+    </div>`).join('')}
+    <div class="cwrap"><canvas id="rc${idx}" role="img" aria-label="Gráfico radar DISC de ${p.name}">D=${p.pct.D}%, I=${p.pct.I}%, S=${p.pct.S}%, C=${p.pct.C}%.</canvas></div>
+    <div class="dtg">
+      ${['D','I','S','C'].map(k=>`<div class="di"><span class="dk">${DN[k]}</span><br><span class="dv">${p.freq[k]} respostas · ${p.pct[k]}%</span></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderPersonChart(p,idx){
+  const ctx=document.getElementById('rc'+idx);
+  if(!ctx)return;
+  charts['r'+idx]=new Chart(ctx,{type:'radar',
+    data:{labels:['D — Dominância','I — Influência','S — Estabilidade','C — Conformidade'],
+      datasets:[{label:'%',data:[p.pct.D,p.pct.I,p.pct.S,p.pct.C],
+        backgroundColor:DC[p.primary]+'33',borderColor:DC[p.primary],
+        borderWidth:2,pointBackgroundColor:DC[p.primary],pointRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{r:{min:0,max:55,ticks:{stepSize:10,callback:v=>v+'%',font:{size:10}},
+        pointLabels:{font:{size:11,family:'Nunito Sans'}},grid:{color:'rgba(0,0,0,0.07)'}}}
+    }
+  });
+}
+
+buildSummary();
+buildTabs();
+renderContent();
+</script>
+</body>
+</html>
